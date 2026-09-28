@@ -1,8 +1,6 @@
 package com.ecom.productcatalog.controller;
 
-import com.ecom.productcatalog.dto.LoginResponse;
-import com.ecom.productcatalog.dto.UserRequest;
-import com.ecom.productcatalog.dto.UserResponse;
+import com.ecom.productcatalog.dto.*;
 import com.ecom.productcatalog.model.User;
 import com.ecom.productcatalog.service.UserService;
 import org.springframework.security.core.Authentication;
@@ -34,6 +32,35 @@ public class UserController {
     public UserResponse getCurrentUser(Authentication authentication) {
 
         return userService.getCurrentUser(authentication.getName());
+    }
+
+    @PostMapping("/forgot-password")
+    public void forgotPassword(
+            @RequestBody ForgotPasswordRequest request) {
+
+        userService.forgotPassword(request.getEmail());
+    }
+
+    @PostMapping("/reset-password")
+    public void resetPassword(
+            @RequestBody ResetPasswordRequest request) {
+
+        userService.resetPassword(
+                request.getToken(),
+                request.getPassword()
+        );
+    }
+
+    @PostMapping("/change-password")
+    public void changePassword(
+            @RequestBody ChangePasswordRequest request,
+            Authentication authentication) {
+
+        userService.changePassword(
+                authentication.getName(),
+                request.getCurrentPassword(),
+                request.getNewPassword()
+        );
     }
 
 }

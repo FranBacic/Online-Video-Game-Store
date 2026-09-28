@@ -12,6 +12,8 @@ import 'bootstrap-icons/font/bootstrap-icons.css'
 import Login from './screens/Login.jsx'
 import Register from './screens/Register.jsx'
 import Profile from './screens/Profile.jsx'
+import ForgotPassword from './screens/ForgotPassword.jsx'
+import ResetPassword from './screens/ResetPassword.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -25,6 +27,8 @@ createRoot(document.getElementById('root')).render(
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>,

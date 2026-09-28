@@ -1,59 +1,55 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import '../App.css'
-import Navbar from '../components/Navbar'
 
-function Login() {
-
-    const navigate = useNavigate()
+function ForgotPassword() {
 
     const [email, setEmail] = useState('')
-    const [username, setusername] = useState('')
-    const [password, setPassword] = useState('')
+    const [message, setMessage] = useState('')
     const [error, setError] = useState('')
 
     const handleSubmit = async (event) => {
 
         event.preventDefault()
+
+        setMessage('')
         setError('')
 
         try {
 
             const response = await fetch(
-                'http://localhost:8080/api/users/login',
+                'http://localhost:8080/api/users/forgot-password',
                 {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        email,
-                        password
+                        email
                     })
                 }
             )
 
             if (!response.ok) {
-                setError('Invalid username or password.')
+                setError('If an account with this email exists, a password reset link has been sent.')
                 return
             }
 
-            const data = await response.json()
-
-            localStorage.setItem('token', data.token)
-
-            navigate('/app')
+            setMessage(
+                'If an account with this email exists, a password reset link has been sent.'
+            )
 
         } catch (error) {
-            setError('Something went wrong. Please try again.')
+
+            setError(
+                'Something went wrong. Please try again.'
+            )
         }
     }
 
     return (
         <div className="auth-page">
 
-
-            {/* Logo */}
             <div className="text-center mb-4">
 
                 <Link
@@ -68,40 +64,45 @@ function Login() {
             </div>
 
 
-            {/* Login card */}
             <div className="auth-card bg-white rounded-4 shadow-sm p-4 p-md-5">
 
                 <div className="text-center mb-4">
 
                     <h1 className="fw-bold mb-2">
-                        Welcome back
+                        Forgot your password?
                     </h1>
 
                     <p className="text-secondary mb-0">
-                        Login to your Shoply account
+                        Enter your email and we'll help you reset your password.
                     </p>
 
                 </div>
 
 
                 {error && (
-                    <div className="alert alert-danger" role="alert">
+                    <div className="alert alert-danger">
                         {error}
+                    </div>
+                )}
+
+
+                {message && (
+                    <div className="alert alert-success">
+                        {message}
                     </div>
                 )}
 
 
                 <form onSubmit={handleSubmit}>
 
-                    {/* Username */}
-                    <div className="mb-3">
+                    <div className="mb-4">
 
                         <label className="form-label fw-semibold">
                             Email
                         </label>
 
                         <input
-                            type="text"
+                            type="email"
                             className="form-control form-control-lg"
                             placeholder="Enter your email"
                             value={email}
@@ -114,41 +115,11 @@ function Login() {
                     </div>
 
 
-                    {/* Password */}
-                    <div className="mb-4">
-
-                        <label className="form-label fw-semibold">
-                            Password
-                        </label>
-
-                        <input
-                            type="password"
-                            className="form-control form-control-lg"
-                            placeholder="Enter your password"
-                            value={password}
-                            onChange={(event) =>
-                                setPassword(event.target.value)
-                            }
-                            required
-                        />
-
-                    </div>
-
-                    <div className="text-end mb-4">
-                        <Link
-                            to="/forgot-password"
-                            className="text-primary text-decoration-none"
-                        >
-                            Forgot password?
-                        </Link>
-                    </div>
-
-
                     <button
                         type="submit"
                         className="btn btn-primary btn-lg w-100"
                     >
-                        Login
+                        Send reset link
                     </button>
 
                 </form>
@@ -156,30 +127,14 @@ function Login() {
 
                 <div className="text-center mt-4">
 
-                    <span className="text-secondary">
-                        Don't have an account?
-                    </span>{' '}
-
                     <Link
-                        to="/register"
+                        to="/login"
                         className="text-primary fw-semibold text-decoration-none"
                     >
-                        Create one
+                        ← Back to login
                     </Link>
 
                 </div>
-
-            </div>
-
-
-            <div className="text-center mt-4">
-
-                <Link
-                    to="/"
-                    className="text-secondary text-decoration-none"
-                >
-                    ← Back to Shoply
-                </Link>
 
             </div>
 
@@ -187,4 +142,4 @@ function Login() {
     )
 }
 
-export default Login
+export default ForgotPassword

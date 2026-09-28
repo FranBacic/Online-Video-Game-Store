@@ -10,6 +10,14 @@ function Profile() {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
 
+    const [currentPassword, setCurrentPassword] = useState('')
+    const [newPassword, setNewPassword] = useState('')
+    const [confirmPassword, setConfirmPassword] = useState('')
+
+    const [passwordError, setPasswordError] = useState('')
+    const [passwordSuccess, setPasswordSuccess] = useState('')
+    const [changingPassword, setChangingPassword] = useState(false)
+
     useEffect(() => {
 
         const token = localStorage.getItem('token')
@@ -42,7 +50,72 @@ function Profile() {
                 setLoading(false)
             })
 
+        
+
     }, [])
+
+    const handleChangePassword = async (event) => {
+
+        event.preventDefault()
+
+        setPasswordError('')
+        setPasswordSuccess('')
+
+        if (newPassword !== confirmPassword) {
+            setPasswordError('New passwords do not match.')
+            return
+        }
+
+
+        setChangingPassword(true)
+
+        const token = localStorage.getItem('token')
+
+        try {
+
+            const response = await fetch(
+                'http://localhost:8080/api/users/change-password',
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        currentPassword,
+                        newPassword
+                    })
+                }
+            )
+
+            if (!response.ok) {
+
+                const errorData = await response.json().catch(() => null)
+
+                throw new Error(
+                    errorData?.message ||
+                    'Failed to change password.'
+                )
+            }
+
+            setCurrentPassword('')
+            setNewPassword('')
+            setConfirmPassword('')
+
+            setPasswordSuccess(
+                'Your password has been changed successfully.'
+            )
+
+        } catch (error) {
+
+            setPasswordError(error.message)
+
+        } finally {
+
+            setChangingPassword(false)
+
+        }
+    }
 
     if (loading) {
         return (
@@ -227,26 +300,131 @@ function Profile() {
                             {/* Actions */}
                             <div className="border-top pt-4">
 
-                                <h5 className="fw-bold mb-3">
-                                    Account
-                                </h5>
+                                {/* Change password */}
+                                <div className="border-top pt-4 mt-4">
 
-                                <div className="d-flex gap-2 flex-wrap">
+                                    <h5 className="fw-bold mb-4">
+                                        Change Password
+                                    </h5>
 
-                                    <Link
-                                        to="/app"
-                                        className="btn btn-primary"
-                                    >
-                                        <i className="bi bi-bag me-2"></i>
-                                        Continue shopping
-                                    </Link>
+                                    <form onSubmit={handleChangePassword}>
 
-                                    <Link
-                                        to="/"
-                                        className="btn btn-outline-dark"
-                                    >
-                                        Back to home
-                                    </Link>
+                                        {/* Current password */}
+                                        <div className="mb-3">
+
+                                            <label
+                                                htmlFor="currentPassword"
+                                                className="form-label fw-semibold"
+                                            >
+                                                Current Password
+                                            </label>
+
+                                            <input
+                                                type="password"
+                                                id="currentPassword"
+                                                className="form-control"
+                                                value={currentPassword}
+                                                onChange={(event) =>
+                                                    setCurrentPassword(event.target.value)
+                                                }
+                                                required
+                                            />
+
+                                        </div>
+
+
+                                        {/* New password */}
+                                        <div className="mb-3">
+
+                                            <label
+                                                htmlFor="newPassword"
+                                                className="form-label fw-semibold"
+                                            >
+                                                New Password
+                                            </label>
+
+                                            <input
+                                                type="password"
+                                                id="newPassword"
+                                                className="form-control"
+                                                value={newPassword}
+                                                onChange={(event) =>
+                                                    setNewPassword(event.target.value)
+                                                }
+                                                
+                                                required
+                                            />
+
+                                        </div>
+
+
+                                        {/* Confirm new password */}
+                                        <div className="mb-3">
+
+                                            <label
+                                                htmlFor="confirmPassword"
+                                                className="form-label fw-semibold"
+                                            >
+                                                Confirm New Password
+                                            </label>
+
+                                            <input
+                                                type="password"
+                                                id="confirmPassword"
+                                                className="form-control"
+                                                value={confirmPassword}
+                                                onChange={(event) =>
+                                                    setConfirmPassword(event.target.value)
+                                                }
+                                                required
+                                            />
+
+                                        </div>
+
+
+                                        {/* Error */}
+                                        {passwordError && (
+                                            <div className="alert alert-danger py-2">
+                                                <i className="bi bi-exclamation-circle me-2"></i>
+                                                {passwordError}
+                                            </div>
+                                        )}
+
+
+                                        {/* Success */}
+                                        {passwordSuccess && (
+                                            <div className="alert alert-success py-2">
+                                                <i className="bi bi-check-circle me-2"></i>
+                                                {passwordSuccess}
+                                            </div>
+                                        )}
+
+
+                                        <button
+                                            type="submit"
+                                            className="btn btn-dark"
+                                            disabled={changingPassword}
+                                        >
+
+                                            {changingPassword ? (
+                                                <>
+                                                    <span
+                                                        className="spinner-border spinner-border-sm me-2"
+                                                        role="status"
+                                                    ></span>
+
+                                                    Changing password...
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <i className="bi bi-key me-2"></i>
+                                                    Change Password
+                                                </>
+                                            )}
+
+                                        </button>
+
+                                    </form>
 
                                 </div>
 
