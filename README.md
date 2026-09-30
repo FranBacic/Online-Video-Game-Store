@@ -79,4 +79,4 @@ The project was developed to practice full-stack web development, with a focus o
 
 ### Reset Forgotten Password
 
-![Homepage](Screenshots/my-profile.png)
+![Homepage](Screenshots/Reset-Password.png)
